@@ -1,37 +1,31 @@
 # AUEP-L — Adaptive Early-Exit Language Model for Real-Time Autocomplete
 
-AUEP-L is a research-oriented **early-exit language model for real-time text autocomplete**. The project explores how a multi-layer Transformer can dynamically stop computation at an intermediate layer when the model is sufficiently confident about its prediction, reducing unnecessary computation while maintaining prediction quality.
+AUEP-L is a research-oriented project that explores **adaptive early-exit inference for Transformer-based real-time text autocomplete**.
 
-The notebook implements a complete experimental pipeline covering model training, confidence estimation, adaptive early exiting, statistical calibration, ablation analysis, struggle-aware adaptation, evaluation, and a live next-word demonstration.
+Instead of forcing every prediction to pass through all Transformer layers, AUEP-L evaluates intermediate predictions using multiple confidence signals and exits early when the model is sufficiently confident.
+
+The project investigates the trade-off between **prediction quality, inference computation, and response speed**.
 
 ---
 
 ## 📌 Project Overview
 
-Traditional autoregressive language models process every input through all Transformer layers before producing a prediction.
+Traditional Transformer language models process an input through the complete network before generating a prediction.
 
-AUEP-L investigates an alternative approach:
+AUEP-L introduces an early-exit mechanism:
 
 ```text
 Input Text
     ↓
-Transformer Layer 1
+Transformer Layer
     ↓
-Transformer Layer 2
+Intermediate Prediction
     ↓
-Confidence Check
+Confidence Evaluation
     ↓
- ┌───────────────┐
- │ Confident?    │
- └───────┬───────┘
-         │
-     Yes │ No
-         │
-         ↓
-   Early Exit     Continue
-                      ↓
-                Next Transformer Layer
-                      ↓
-                Confidence Check
-                      ↓
-                   Output
+Is the prediction confident?
+    ├── Yes → Early Exit → Prediction
+    │
+    └── No → Continue to next layer
+                    ↓
+              Final Prediction
